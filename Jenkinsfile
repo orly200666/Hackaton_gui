@@ -2,6 +2,7 @@
 
 // Declarative Pipeline fundamentals
 pipeline {
+    agent {node {label 'master'}}
     options {buildDiscarder(logRotator(numToKeepStr: '5', daysToKeepStr: '10'))}
     stages {
         stage('Build') {
