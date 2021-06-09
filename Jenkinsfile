@@ -9,6 +9,7 @@ pipeline {
                 sh '''
                     echo "Building 1... 2... 3..." > build.log
                 '''
+                cleanWs()
             }
         }
         stage('Test') {
@@ -16,6 +17,7 @@ pipeline {
                 sh '''
                     echo "Testing 1... 2... 3..." > test.log
                 '''
+                cleanWs()
             }
         }
         stage('Deploy') {
@@ -23,6 +25,7 @@ pipeline {
                 sh '''
                     echo "Deploying 1... 2... 3..." > deploy.log
                 '''
+                cleanWs()
             }
         }
     }
