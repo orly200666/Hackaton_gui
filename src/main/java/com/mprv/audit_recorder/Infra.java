@@ -143,21 +143,25 @@ public class Infra implements Runnable{
 
         String rawQuery;
         for (AuditRawDO audit : rawData) {
-
-            //query queryType="connect" query="connect to the database: default" database="default"
-            //rootElement.appendChild(doc.createElement("query"));
             rawQuery = audit.getFieldValue(eAuditPhaseTwo_parameters.rawQuery);
+            System.out.println(rawQuery);
 
             Element query = doc.createElement("query");
-            query.setAttribute("queryType", getQueryType(rawQuery));
-            query.setAttribute("query", audit.getFieldValue(eAuditPhaseTwo_parameters.rawQuery));
 
-            switch (getQueryType(rawQuery)) {
-                case "connect":
-                case "disconnect":
-                    query.setAttribute("database", rawQuery.substring(rawQuery.indexOf("database:") + 10));
+            switch (audit.getFieldValue(eAuditPhaseTwo_parameters.eventType)) {
+                case "Login":
+                    query.setAttribute("queryType", "connect");
+                    query.setAttribute("query", "connect to the database: default");
+                    query.setAttribute("database", "default");
+                    break;
+                case "Logout":
+                    query.setAttribute("queryType", "disconnect");
+                    query.setAttribute("query", "disconnect to the database: default");
+                    query.setAttribute("database", "default");
                     break;
                 default:
+                    query.setAttribute("queryType", "statement");
+                    query.setAttribute("query", audit.getFieldValue(eAuditPhaseTwo_parameters.rawQuery));
                     query.setAttribute("ignore", "false");
             }
             rootElement.appendChild(query);
@@ -182,19 +186,6 @@ public class Infra implements Runnable{
         }
     }
 
-
-    private static String getQueryType(String rawQuery)
-    {
-        String firstWordOfQuery = (rawQuery.split(" ")[0]).toLowerCase();
-        switch(firstWordOfQuery) {
-            case "connect":
-                return "connect";
-            case "disconnect":
-                return "disconnect";
-            default:
-                return "statement";
-        }
-    }
 
     private static void writeXml(Document doc, OutputStream output)
             throws TransformerException {
@@ -263,7 +254,7 @@ public class Infra implements Runnable{
                     AppendText.appendToPane(textArea1, "Audit verification fail" + " " + new Date(), Color.RED);
                 }
             } catch (AutomationException | IOException e) {
-                AppendText.appendToPane(textArea1, "Audit verification fail  with error message: " + e.getMessage() + " " + new Date(), Color.RED);
+                AppendText.appendToPane(textArea1, "Audit verification fail with error message: " + e.getMessage() + " " + new Date(), Color.RED);
             }
         } else {
             AppendText.appendToPane(textArea1, "Get policy by name: " + policyName.getText() + " fail" + " " + new Date(), Color.RED);
