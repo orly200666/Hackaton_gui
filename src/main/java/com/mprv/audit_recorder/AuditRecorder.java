@@ -155,7 +155,7 @@ public class AuditRecorder {
                                 Infra infra = new Infra(textArea1, policyName, password, ip, xmlPath, xmlFile, runBtn, cleanDataBtn);
                             Thread thread = new Thread(infra);
                             thread.setDaemon(true);
-                            thread.start();
+                            //thread.start();
                         } else {
                             AppendText.appendToPane(textArea1,"File : " + xmlFile + " is currently exist in given path " + xmlPath, Color.RED);
                         }

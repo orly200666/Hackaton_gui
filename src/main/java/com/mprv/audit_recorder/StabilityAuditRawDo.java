@@ -5,42 +5,49 @@ import com.mprv.automation.operations.postJelly.eAuditPhaseTwo_parameters;
 import java.util.Arrays;
 import java.util.List;
 
-public class StabilityAuditRawDo { private static List<eAuditPhaseTwo_parameters> allAuditParams = Arrays.asList(
+public class StabilityAuditRawDo {
+
+    private static List<eAuditPhaseTwo_parameters> allAuditParams = Arrays.asList(
+
+        eAuditPhaseTwo_parameters.dbInstance,
         eAuditPhaseTwo_parameters.operation,
         eAuditPhaseTwo_parameters.object,
         eAuditPhaseTwo_parameters.exceptionOccurred,
-        eAuditPhaseTwo_parameters.hits,
+        //eAuditPhaseTwo_parameters.hits,
         eAuditPhaseTwo_parameters.applicationUser,
         eAuditPhaseTwo_parameters.schema,
         eAuditPhaseTwo_parameters.eventType,
         eAuditPhaseTwo_parameters.privileged,
-        eAuditPhaseTwo_parameters.isSensitive,
-        eAuditPhaseTwo_parameters.isStoredProcedure,
-        eAuditPhaseTwo_parameters.osUser,
+        //eAuditPhaseTwo_parameters.isSensitive,
+        //eAuditPhaseTwo_parameters.isStoredProcedure,
+        //eAuditPhaseTwo_parameters.osUser,
         eAuditPhaseTwo_parameters.objectType,
         eAuditPhaseTwo_parameters.normalizedQuery,
         eAuditPhaseTwo_parameters.serviceType,
-        eAuditPhaseTwo_parameters.sourceApp,
+        //eAuditPhaseTwo_parameters.sourceApp,
         eAuditPhaseTwo_parameters.sourceOfActivity,
-        eAuditPhaseTwo_parameters.subject,
+        //eAuditPhaseTwo_parameters.subject,
         eAuditPhaseTwo_parameters.dbUser,
-        eAuditPhaseTwo_parameters.isAuthenticated,
+        //eAuditPhaseTwo_parameters.isAuthenticated,
         eAuditPhaseTwo_parameters.destinationPort,
         eAuditPhaseTwo_parameters.originalUserName,
         eAuditPhaseTwo_parameters.rawQuery,
-        eAuditPhaseTwo_parameters.queryGroup,
+        //eAuditPhaseTwo_parameters.queryGroup,
         eAuditPhaseTwo_parameters.exceptionString,
         eAuditPhaseTwo_parameters.bindVars,
-        eAuditPhaseTwo_parameters.gatewayIdName,
-        eAuditPhaseTwo_parameters.policy,
+        //eAuditPhaseTwo_parameters.gatewayIdName,
+        //eAuditPhaseTwo_parameters.policy,
         eAuditPhaseTwo_parameters.database,
-        eAuditPhaseTwo_parameters.service,
-        eAuditPhaseTwo_parameters.applicationIdName,
+        //eAuditPhaseTwo_parameters.service,
+        //eAuditPhaseTwo_parameters.applicationIdName,
         eAuditPhaseTwo_parameters.eventID,
         eAuditPhaseTwo_parameters.destinationIp,
         eAuditPhaseTwo_parameters.responseSizeSum,
         eAuditPhaseTwo_parameters.affectedRowsSum,
         eAuditPhaseTwo_parameters.sourceIp
+
+
+        ////////////////////
 //            eAuditPhaseTwo_parameters.affectedRowsSum,
 //            eAuditPhaseTwo_parameters.dbInstance,
 //            eAuditPhaseTwo_parameters.eventRealDateAndTime,

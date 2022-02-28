@@ -31,10 +31,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.awt.*;
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Infra implements Runnable{
     static Setup setup = null;
@@ -140,11 +137,12 @@ public class Infra implements Runnable{
         Document doc = docBuilder.newDocument();
         Element rootElement = doc.createElement("queries");
         doc.appendChild(rootElement);
+        rawData = sortAudits(rawData);
 
         String rawQuery;
         for (AuditRawDO audit : rawData) {
             rawQuery = audit.getFieldValue(eAuditPhaseTwo_parameters.rawQuery);
-            System.out.println(rawQuery);
+            System.out.println("query: " + rawQuery + ", type: " + audit.getFieldValue(eAuditPhaseTwo_parameters.eventType));
 
             Element query = doc.createElement("query");
 
@@ -171,9 +169,18 @@ public class Infra implements Runnable{
             query.appendChild(auditEventVerifications);
 
             for (eAuditPhaseTwo_parameters e_par : eParams) {
+                if(e_par == eAuditPhaseTwo_parameters.eventID)
+                    continue;
                 Element auditEventVerification = doc.createElement("auditEventVerification");
                 auditEventVerification.setAttribute("searchColumn", "v_" + e_par.name());
-                auditEventVerification.setAttribute("searchValue", audit.getFieldValue(e_par));
+                if(e_par == eAuditPhaseTwo_parameters.sourceIp || e_par == eAuditPhaseTwo_parameters.destinationIp
+                        || e_par == eAuditPhaseTwo_parameters.sourceOfActivity) {
+                    //this is a dynamic variable
+                    auditEventVerification.setAttribute("searchValue", "${"+e_par.name()+"}");
+                }
+                else {
+                    auditEventVerification.setAttribute("searchValue", audit.getFieldValue(e_par));
+                }
                 auditEventVerifications.appendChild(auditEventVerification);
             }
         }
@@ -184,6 +191,18 @@ public class Infra implements Runnable{
         } catch (IOException | TransformerException e) {
             e.printStackTrace();
         }
+    }
+
+    public static java.util.List<AuditRawDO> sortAudits(java.util.List<AuditRawDO> rawData){
+        Collections.sort(rawData, new Comparator<AuditRawDO>() {
+
+            public int compare(AuditRawDO o1, AuditRawDO o2) {
+                // compare two instance of `Score` and return `int` as result.
+                return o2.getFieldValue(eAuditPhaseTwo_parameters.eventID).compareTo(o1.getFieldValue(eAuditPhaseTwo_parameters.eventID));
+            }
+        });
+        Collections.reverse(rawData);
+        return rawData;
     }
 
 
