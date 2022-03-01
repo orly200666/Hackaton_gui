@@ -36,8 +36,9 @@ import java.util.*;
 public class Infra implements Runnable{
     static Setup setup = null;
     static AuditPolicyDO policy = null;
-    private String xmlFile;
-    private String xmlPath;
+    private String fileName;
+    private String filePath;
+    private String fileType;
     private JTextPane textArea1;
     private JTextField policyName;
     private JTextField password;
@@ -46,17 +47,24 @@ public class Infra implements Runnable{
     private JButton cleanBtn;
     public boolean isRunning = true;
 
-    public Infra(JTextPane textArea, JTextField policyName, JTextField password, JTextField ip, String xmlPath, String xmlFile, JButton runBtn, JButton cleanBtn){
+    public Infra(JTextPane textArea, JTextField policyName, JTextField password, JTextField ip, String filePath, String file, JButton runBtn, JButton cleanBtn){
         this.textArea1 = textArea;
         this.policyName = policyName;
         this.password = password;
         this.ip = ip;
-        this.xmlPath = xmlPath;
-        this.xmlFile = xmlFile;
+        this.filePath = filePath;
+        this.fileName = file;
         this.runBtn = runBtn;
         this.cleanBtn = cleanBtn;
+        this.fileType = getFileType(this.fileName);
+    }
 
-
+    private String getFileType(String fileName) {
+        int lastIndexOf = fileName.lastIndexOf(".");
+        if (lastIndexOf == -1) {
+            return ""; // empty extension
+        }
+        return fileName.substring(lastIndexOf);
     }
 //    public void createJsonData() {
 //        MonitoredEventReporter monitoredEventReporter = new MonitoredEventReporter();
@@ -87,12 +95,10 @@ public class Infra implements Runnable{
         DefaultsService.setMxSystemPassword(genericPassword);
     }
 
-    private void create_xml_audit() throws ParserConfigurationException {
-
+    private void create_audit() throws ParserConfigurationException {
         AuditPolicyService ps = new AuditPolicyService();
         try {
             policy = ps.getPolicyByNameWithPredicates(setup.getPrimaryServer(), policyName.getText(), true);
-//            policy = ps.getPolicyByName(setup.getPrimaryServer(), policyName.getText());
         } catch (AutomationException | NullPointerException e) {
             AppendText.appendToPane(textArea1, "Get policy by name fail with exception: " + e.getMessage() + " " + new Date(), Color.RED);
             return;
@@ -109,9 +115,14 @@ public class Infra implements Runnable{
                         StabilityAuditRawDo.getAllAuditParams(), 5, 5);
                 AppendText.appendToPane(textArea1, "Get audit finish" + " " + new Date(), Color.BLACK);
                 if (rawData != null && !rawData.isEmpty()) {
-                    buildXML(rawData);
-                    System.out.println("Build XML done");
-                    if (new File(xmlPath + xmlFile).exists()) {
+                    if(this.fileType.equals(".xml")){
+                        buildXML(rawData);
+                    }
+                    else {
+                        buildJSON(rawData);
+                    }
+                    System.out.println("Build file done");
+                    if (new File(filePath + fileName).exists()) {
                         AppendText.appendToPane(textArea1, "SUCCESS", Color.GREEN);
                     } else {
                         AppendText.appendToPane(textArea1, "FAIL", Color.RED);
@@ -124,6 +135,27 @@ public class Infra implements Runnable{
             }
         } else {
             AppendText.appendToPane(textArea1, "Get policy by name: " + policyName.getText() + " fail" + " " + new Date(), Color.RED);
+        }
+    }
+
+    public void buildJSON(java.util.List<AuditRawDO> rawData) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        java.util.List<HashMap> jsonObj = new ArrayList<>();
+        java.util.List<eAuditPhaseTwo_parameters> eParams = StabilityAuditRawDo.getAllAuditParams();
+        HashMap<String, String> obj;
+        for (AuditRawDO data : rawData) {
+            obj = new HashMap<>();
+            for (eAuditPhaseTwo_parameters e_par : eParams) {
+                obj.put(e_par.name(), data.getFieldValue(e_par));
+            }
+            jsonObj.add(obj);
+        }
+        ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
+        writer.writeValue(new File(filePath + fileName), jsonObj);
+        if (new File(filePath + fileName).exists()) {
+            AppendText.appendToPane(textArea1, "SUCCESS", Color.GREEN);
+        } else {
+            AppendText.appendToPane(textArea1, "FAIL", Color.RED);
         }
     }
 
@@ -186,7 +218,7 @@ public class Infra implements Runnable{
         }
 
         // write dom document to a file
-        try (FileOutputStream output = new FileOutputStream(this.xmlPath + this.xmlFile)) {
+        try (FileOutputStream output = new FileOutputStream(this.filePath + this.fileName)) {
             writeXml(doc, output);
         } catch (IOException | TransformerException e) {
             e.printStackTrace();
@@ -278,9 +310,6 @@ public class Infra implements Runnable{
         } else {
             AppendText.appendToPane(textArea1, "Get policy by name: " + policyName.getText() + " fail" + " " + new Date(), Color.RED);
         }
-//        ////
-//        create_xml_from_json(jsonPath + jsonFile);
-//        ///
     }
 //    private void appendToPane(JTextPane textArea, String msg, Color c) {
 //        StyleContext sc = StyleContext.getDefaultStyleContext();
@@ -315,9 +344,8 @@ public class Infra implements Runnable{
             AppendText.appendToPane(textArea1, "Connect to MX fail with exception: " + e.getMessage() + " " + new Date(), Color.RED);
             return;
         }
-        //create_json_audit();
         try {
-            create_xml_audit();
+            create_audit();
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         }

@@ -56,7 +56,7 @@
                     <archive>
                         <manifest>
                             <!--<addClasspath>true</addClasspath>-->
-                            <mainClass>com.mprv.audit_recorder.Auditgui</mainClass>
+                            <mainClass>com.mprv.audit_recorder.AuditRecorder</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -70,7 +70,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.mprv.audit_recorder.Auditgui</mainClass>
+                            <mainClass>com.mprv.audit_recorder.AuditRecorder</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

@@ -8,6 +8,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.Date;
 
@@ -15,6 +16,7 @@ import java.util.Date;
  * Created by vladislavs on 11/27/2017.
  */
 public class AuditRecorder {
+
     private JButton runBtn;
     private JTextField ip;
     private JTextField path;
@@ -28,14 +30,19 @@ public class AuditRecorder {
     private JPanel consolePunel;
     private JTextPane textArea1;
     private JButton cleanDataBtn;
+    private JRadioButton createJSONFileRadioButton;
+    private JRadioButton createXMLFileRadioButton;
 
     JFrame jFrame;
     static Setup setup = null;
     static AuditPolicyDO policy = null;
-    String xmlFile;
-    String xmlPath;
+    String file;
+    String filePath;
     ActionListener action;
     boolean ignoreEvents = false;
+
+    boolean createJsonFile;
+    boolean createXMLFile;
 
 
     public AuditRecorder() {
@@ -47,22 +54,30 @@ public class AuditRecorder {
                 if (checkIfFieldIsClear()) {
                     AppendText.appendToPane(textArea1, "Program is running please wait..." + " " + new Date(), Color.BLACK);
                     if (path.getText().endsWith("/")) {
-                        xmlPath = path.getText();
+                        filePath = path.getText();
                     } else {
-                        xmlPath = path.getText() + "/";
+                        filePath = path.getText() + "/";
                     }
-                    xmlFile = fileName.getText() + ".xml";
-                    if (new File(xmlPath).exists()) {
-                        if (!new File(xmlPath + xmlFile).exists()) {
-                            Infra infra = new Infra(textArea1, policyName, password, ip, xmlPath, xmlFile, runBtn, cleanDataBtn);
+                    if (createXMLFileRadioButton.isSelected()){
+                        file = fileName.getText() + ".xml";
+                    }
+                    else{
+                        //create JSON file
+                        //if(createJSONFileRadioButton.isSelected())
+                        file = fileName.getText() + ".json";
+                    }
+
+                    if (new File(filePath).exists()) {
+                        if (!new File(filePath + file).exists()) {
+                            Infra infra = new Infra(textArea1, policyName, password, ip, filePath, file, runBtn, cleanDataBtn);
                             Thread thread = new Thread(infra);
                             thread.setDaemon(true);
                             thread.start();
                         } else {
-                            AppendText.appendToPane(textArea1, "File : " + xmlFile + " is currently exist in given path " + xmlPath + " " + new Date(), Color.RED);
+                            AppendText.appendToPane(textArea1, "File : " + file + " is currently exist in given path " + filePath + " " + new Date(), Color.RED);
                         }
                     } else {
-                        AppendText.appendToPane(textArea1, "Path: " + xmlPath + " is not valid.", Color.RED);
+                        AppendText.appendToPane(textArea1, "Path: " + filePath + " is not valid.", Color.RED);
                     }
                 }
 //                cleanDataBtn.setEnabled(true);
@@ -83,6 +98,32 @@ public class AuditRecorder {
                     thread.start();
                 }
 //                runBtn.setEnabled(true);
+            }
+        });
+        createXMLFileRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea1.setText(null);
+                AppendText.appendToPane(textArea1, "You choose to create XML file \nPlease fill in the text box. ", Color.BLACK);
+                createXMLFile = true;
+                createJsonFile = false;
+                if(createJSONFileRadioButton.isSelected())
+                {
+                    createJSONFileRadioButton.setSelected(false);
+                }
+            }
+        });
+        createJSONFileRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                textArea1.setText(null);
+                AppendText.appendToPane(textArea1, "You choose to create JSON file \nPlease fill in the text box. ", Color.BLACK);
+                createXMLFile = false;
+                createJsonFile = true;
+                if(createXMLFileRadioButton.isSelected())
+                {
+                    createXMLFileRadioButton.setSelected(false);
+                }
             }
         });
     }
@@ -145,22 +186,29 @@ public class AuditRecorder {
                 if (checkIfFieldIsClear()) {
                     AppendText.appendToPane(textArea1,"Program is running please wait...", Color.BLACK);
                     if (path.getText().endsWith("/")) {
-                        xmlPath = path.getText();
+                        filePath = path.getText();
                     } else {
-                        xmlPath = path.getText() + "/";
+                        filePath = path.getText() + "/";
                     }
-                    xmlFile = fileName.getText() + ".xml";
-                    if (new File(xmlPath).exists()) {
-                        if (!new File(xmlPath + xmlFile).exists()) {
-                                Infra infra = new Infra(textArea1, policyName, password, ip, xmlPath, xmlFile, runBtn, cleanDataBtn);
+                    if (createXMLFileRadioButton.isSelected()){
+                        file = fileName.getText() + ".xml";
+                    }
+                    else{
+                        //create JSON file
+                        //if(createJSONFileRadioButton.isSelected())
+                        file = fileName.getText() + ".json";
+                    }
+                    if (new File(filePath).exists()) {
+                        if (!new File(filePath + file).exists()) {
+                                Infra infra = new Infra(textArea1, policyName, password, ip, filePath, file, runBtn, cleanDataBtn);
                             Thread thread = new Thread(infra);
                             thread.setDaemon(true);
                             //thread.start();
                         } else {
-                            AppendText.appendToPane(textArea1,"File : " + xmlFile + " is currently exist in given path " + xmlPath, Color.RED);
+                            AppendText.appendToPane(textArea1,"File : " + file + " is currently exist in given path " + filePath, Color.RED);
                         }
                     } else {
-                        AppendText.appendToPane(textArea1,"Path: " + xmlPath + " is not valid.", Color.RED);
+                        AppendText.appendToPane(textArea1,"Path: " + filePath + " is not valid.", Color.RED);
                     }
                 }
             }
