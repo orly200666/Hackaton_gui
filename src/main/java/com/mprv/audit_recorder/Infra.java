@@ -109,10 +109,16 @@ public class Infra implements Runnable{
                 URL whatismyip = new URL("http://checkip.amazonaws.com");
                 BufferedReader in = new BufferedReader(new InputStreamReader(
                         whatismyip.openStream()));
-                String ip = in.readLine(); //you get the IP as a String
-                java.util.List<AuditRawDO> rawData = new AuditUtils().checkForAuditWithRetries(setup.getPrimaryServer(), policy,
-                        new AuditFilterDO(),
-                        StabilityAuditRawDo.getAllAuditParams(), 5, 5);
+                java.util.List<AuditRawDO> rawData;
+                if(this.fileType.equals(".xml")) {
+                    rawData = new AuditUtils().checkForAuditWithRetries(setup.getPrimaryServer(), policy,
+                            new AuditFilterDO(), StabilityAuditRawDo.getXMLAuditParams(), 5, 5);
+                }
+                else {
+                    rawData = new AuditUtils().checkForAuditWithRetries(setup.getPrimaryServer(), policy,
+                            new AuditFilterDO(), StabilityAuditRawDo.getJsonAuditParams(), 5, 5);
+                }
+
                 AppendText.appendToPane(textArea1, "Get audit finish" + " " + new Date(), Color.BLACK);
                 if (rawData != null && !rawData.isEmpty()) {
                     if(this.fileType.equals(".xml")){
@@ -141,7 +147,7 @@ public class Infra implements Runnable{
     public void buildJSON(java.util.List<AuditRawDO> rawData) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         java.util.List<HashMap> jsonObj = new ArrayList<>();
-        java.util.List<eAuditPhaseTwo_parameters> eParams = StabilityAuditRawDo.getAllAuditParams();
+        java.util.List<eAuditPhaseTwo_parameters> eParams = StabilityAuditRawDo.getJsonAuditParams();
         HashMap<String, String> obj;
         for (AuditRawDO data : rawData) {
             obj = new HashMap<>();
@@ -160,7 +166,7 @@ public class Infra implements Runnable{
     }
 
     public void buildXML(java.util.List<AuditRawDO> rawData) throws ParserConfigurationException {
-        java.util.List<eAuditPhaseTwo_parameters> eParams = StabilityAuditRawDo.getAllAuditParams();
+        java.util.List<eAuditPhaseTwo_parameters> eParams = StabilityAuditRawDo.getXMLAuditParams();
 
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -285,7 +291,6 @@ public class Infra implements Runnable{
                 if (rawData != null && !rawData.isEmpty()) {
                     java.util.List<HashMap> jsonObj = new ArrayList<>();
                     java.util.List<eAuditPhaseTwo_parameters> eParams = StabilityAuditRawDo.getAllAuditParams();
-//                    java.util.List<eAuditPhaseTwo_parameters> eParams = StabilityAuditRawDo.getFamAuditParams();
                     HashMap<String, String> obj;
                     for (AuditRawDO data : rawData) {
                         obj = new HashMap<>();

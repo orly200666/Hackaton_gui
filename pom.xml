@@ -72,6 +72,7 @@
                         <manifest>
                             <mainClass>com.mprv.audit_recorder.AuditRecorder</mainClass>
                         </manifest>
+                        <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
                     </archive>
                 </configuration>
             </plugin>
