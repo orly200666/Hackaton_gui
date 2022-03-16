@@ -7,7 +7,7 @@ import com.mprv.automation.services.SecureSphereServices.policies.AuditPolicyDO;
 import com.mprv.automation.services.SecureSphereServices.policies.AuditPolicyService;
 import com.mprv.automation.services.internal.DefaultsService;
 import com.mprv.automation.services.internal.SetupsService;
-//import com.mprv.monitoring.MonitoredEventReporter;
+import com.mprv.monitoring.MonitoredEventReporter;
 
 import javax.swing.*;
 import javax.swing.text.AttributeSet;

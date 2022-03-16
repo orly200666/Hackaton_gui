@@ -164,8 +164,10 @@ public class AuditRecorder {
     }
 
     public static void main(String[] args) throws ParserConfigurationException {
-        AuditRecorder main = new AuditRecorder();
-        main.Go();
+        System.out.println("before main");
+        AuditRecorder auditRecorder = new AuditRecorder();
+        System.out.println("create auditRecorder");
+        auditRecorder.Go();
     }
 
     public void Go() {
@@ -174,14 +176,18 @@ public class AuditRecorder {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        JFrame jFrame = new JFrame("AuditRecorder");
-        jFrame.setContentPane(panel1);
-        jFrame.setDefaultCloseOperation(jFrame.EXIT_ON_CLOSE);
-        jFrame.pack();
-        jFrame.setSize(700, 500);
+        System.out.println("1");
+
+        this.jFrame = new JFrame("AuditRecorder");
+        this.jFrame.setContentPane(panel1);
+        this.jFrame.setDefaultCloseOperation(jFrame.EXIT_ON_CLOSE);
+        this.jFrame.pack();
+        this.jFrame.setSize(700, 500);
+        System.out.println("2");
         action = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                System.out.println("3");
                 textArea1.setText(null);
                 if (checkIfFieldIsClear()) {
                     AppendText.appendToPane(textArea1,"Program is running please wait...", Color.BLACK);
@@ -285,6 +291,8 @@ public class AuditRecorder {
         consolePunel.add(scrollPane1, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         textArea1 = new JTextPane();
         scrollPane1.setViewportView(textArea1);
+        createJSONFileRadioButton = new JRadioButton();
+        createXMLFileRadioButton= new JRadioButton();
     }
 
     /**
